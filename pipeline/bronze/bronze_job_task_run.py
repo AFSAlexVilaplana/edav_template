@@ -1,13 +1,16 @@
 # Databricks notebook source
 # MAGIC %run ./bronze_functions
+# MAGIC
 
 # COMMAND ----------
 
-df = create_bronze_dataframe("Healthcare-Diabetes.csv",globalDataLakeConfig)
-create_bronze_table("diabetesTest",df,globalDataLakeConfig)
-
+# MAGIC %run ../universal/schemas
 
 # COMMAND ----------
 
-df = spark.sql("select count(*) from s3t8.diabetestest")
-display(df)
+df = createBronzeDataframe("Healthcare-Diabetes.csv",globalDataLakeConfig,"csv")
+
+createBronzeTable("diabetestest_bronze",df,globalDataLakeConfig)
+
+
+

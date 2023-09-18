@@ -1,16 +1,27 @@
 # Databricks notebook source
-# MAGIC %run ../universal_functions/environment_setup
+# MAGIC %run ../universal/environment_setup
 
 # COMMAND ----------
 
-def create_bronze_dataframe(fileName: str,dataLakeConfig: object):
+# MAGIC %run ../universal/functions
+
+# COMMAND ----------
+
+def createBronzeDataframe(fileName: str,dataLakeConfig: object,fileFormat: str,schema: object = ''):
+    
     dataLakeConn = dataLakeConnection(dataLakeConfig)
-    df = dataLakeConn.readFileFrom(fileName)
+    df = dataLakeConn.readFileFrom(fileName,fileFormat,schema)
+    
     return df
 
-def create_bronze_table(tableName: str, df ,dataLakeConfig: object):
+def createBronzeTable(tableName: str, df: object ,dataLakeConfig: object):
+    assert "_bronze" == tableName[-7:], "tableName argument must contain _bronze suffix"
+    
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     dataLakeConn.writeToTable(df,tableName)
+
+        
+
 
 
 
