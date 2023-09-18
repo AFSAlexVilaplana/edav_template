@@ -12,8 +12,7 @@ def createGoldDataframe(tableName: str, dataLakeConfig: object):
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFromTable(tableName)
      
-    #example manipulations
-    
+        
     return df
 
 def createGoldTable(tableName: str,df: object, dataLakeConfig: object):

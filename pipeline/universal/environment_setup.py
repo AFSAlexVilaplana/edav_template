@@ -7,16 +7,14 @@ import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 #############################below to be implemented for jobs##########################
-class templateEnvironment:
-    database = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="database",debugValue= os.getenv("database)"))
-    database_folder = dbutils.jobs.taskValues.get(taskKey='set_up_params',key='database_folder',debugValue = os.getenv("database_folder"))
-    scope_name = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
-    
-dbutils.widgets.dropdown("read_file_path","abfss://s3t8templatedl@cmods3t8dleus.dfs.core.windows.net/",["abfss://s3t8templatedl@cmods3t8dleus.dfs.core.windows.net/"])
-dbutils.widgets.dropdown("write_file_path","abfss://s3t8templatedl@cmods3t8dleus.dfs.core.windows.net/delta/",["abfss://s3t8templatedl@cmods3t8dleus.dfs.core.windows.net/delta/"])
+# class templateEnvironment:
+#     database = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="database",debugValue= os.getenv("database)"))
+#     database_folder = dbutils.jobs.taskValues.get(taskKey='set_up_params',key='database_folder',debugValue = os.getenv("database_folder"))
+#     scope_name = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
+dbutils.widgets.removeAll()
+dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 
-# dbutils.widgets.dropdown("read_file_path","abfss://ocio-dex-db-dev@hl7dexdlg2.dfs.core.windows.net/",["abfss://ocio-dex-db-dev@hl7dexdlg2.dfs.core.windows.net/"])
-# dbutils.widgets.dropdown("write_file_path","abfss://ocio-dex-db-dev@hl7dexdlg2.dfs.core.windows.net/delta/",["abfss://ocio-dex-db-dev@hl7dexdlg2.dfs.core.windows.net/delta/"])
 
 
 class TemplateEnvironment:
