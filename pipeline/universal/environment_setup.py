@@ -18,7 +18,8 @@ class TemplateEnvironment:
         self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="readFilePath",debugValue= os.getenv("read_file_path").strip())
         self.__database = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="database",debugValue= os.getenv("database"))
         self.__database_folder = dbutils.jobs.taskValues.get(taskKey='set_up_params',key='database_folder',debugValue = os.getenv("database_folder"))
-        self.__scope = scope_name = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
+        self.__scope = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
+        
 
     def getReadFilePath(self):
         return self.__readFilePath
@@ -26,11 +27,25 @@ class TemplateEnvironment:
         return self.__database
     def getDatabaseFolder(self):
         return self.__database_folder
+
     
 globalTemplateEnv = TemplateEnvironment()
 
 
-
+class specificTaskParameters:
+    def __init__(self):
+        self.__fileName = dbutils.widgets.get("file_name")
+        self.__fileExt = dbutils.widgets.get("file_ext")
+        self.__tableName = dbutils.widgets.get("table_name")
+        
+    def getFileName(self):
+        return self.__fileName
+    
+    def getFileExt(self):
+        return self.__fileExt
+    
+    def getTableName(self):
+        return self.__tableName
 
 # COMMAND ----------
 
@@ -39,7 +54,7 @@ class dataLakeConfig:
     def __init__(self,readFilePath,dbName,rootDir):
         self.__readFilePath = readFilePath
         self.__dbName = dbName
-        self.__rootDir = rootDir
+        self.__rootDir = rootDir     
         
     
     def getTable(self,tableName):
@@ -61,6 +76,7 @@ class dataLakeConfig:
     def getRootDir(self):
         
         return self.__rootDir
+    
     
     
 class dataLakeConnection:

@@ -8,9 +8,15 @@
 
 # COMMAND ----------
 
-df = createBronzeDataframe("Healthcare-Diabetes.csv",globalDataLakeConfig,"csv")
 
-createBronzeTable("diabetestest_bronze",df,globalDataLakeConfig)
+
+# COMMAND ----------
+
+
+
+df = createBronzeDataframe(specificTaskParameters.getFileName(),globalDataLakeConfig,specificTaskParameters.getFileExt())
+
+createBronzeTable(specificTaskParameters.getTableName(),df,globalDataLakeConfig)
 
 
 
