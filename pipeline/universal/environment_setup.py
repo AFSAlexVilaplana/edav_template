@@ -37,7 +37,7 @@ class specificTaskParameters:
         self.__fileName = dbutils.widgets.get("file_name")
         self.__fileExt = dbutils.widgets.get("file_ext")
         self.__tableName = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "table_name")
-
+        print(self.__fileName,self.__fileExt)
     def getFileName(self):
         return self.__fileName
     
