@@ -32,12 +32,13 @@ class TemplateEnvironment:
 globalTemplateEnv = TemplateEnvironment()
 
 
-class specificTaskParameters:
+class specificTaskParameters(fileName,fileExt,tableName):
     def __init__(self):
-        self.__fileName = dbutils.widgets.get("file_name")
-        self.__fileExt = dbutils.widgets.get("file_ext")
-        self.__tableName = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "table_name")
-        print(self.__fileName,self.__fileExt)
+        self.__fileName = fileName
+        self.__fileExt = fileExt
+        self.__tableName = tableName
+        
+
     def getFileName(self):
         return self.__fileName
     

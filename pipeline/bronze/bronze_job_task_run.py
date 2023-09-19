@@ -8,15 +8,19 @@
 
 # COMMAND ----------
 
+fileName = dbutils.widgets.get("file_name")
+fileExt = dbutils.widgets.get("file_ext")
+tableName = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "table_name")
 
+parameters = specificTaskParameters(fileName,fileExt,tableName)
 
 # COMMAND ----------
 
 
 
-df = createBronzeDataframe(specificTaskParameters.getFileName(),globalDataLakeConfig,specificTaskParameters.getFileExt())
+df = createBronzeDataframe(parameters.getFileName(),globalDataLakeConfig,parameters.getFileExt())
 
-createBronzeTable(specificTaskParameters.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig)
+createBronzeTable(parameters.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig)
 
 
 
