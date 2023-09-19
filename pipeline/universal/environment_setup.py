@@ -36,15 +36,15 @@ class specificTaskParameters:
     def __init__(self):
         self.__fileName = dbutils.widgets.get("file_name")
         self.__fileExt = dbutils.widgets.get("file_ext")
-        self.__tableName = dbutils.widgets.get("table_name")
-        
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "table_name")
+
     def getFileName(self):
         return self.__fileName
     
     def getFileExt(self):
         return self.__fileExt
     
-    def getTableName(self):
+    def getTableNamePrefix(self):
         return self.__tableName
 
 # COMMAND ----------
@@ -55,8 +55,7 @@ class dataLakeConfig:
         self.__readFilePath = readFilePath
         self.__dbName = dbName
         self.__rootDir = rootDir     
-        
-    
+
     def getTable(self,tableName):
         
         return f"{self.__dbName}.{tableName}"

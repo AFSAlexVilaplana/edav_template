@@ -16,7 +16,7 @@
 
 df = createBronzeDataframe(specificTaskParameters.getFileName(),globalDataLakeConfig,specificTaskParameters.getFileExt())
 
-createBronzeTable(specificTaskParameters.getTableName(),df,globalDataLakeConfig)
+createBronzeTable(specificTaskParameters.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig)
 
 
 
