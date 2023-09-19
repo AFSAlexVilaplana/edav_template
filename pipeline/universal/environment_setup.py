@@ -32,13 +32,12 @@ class TemplateEnvironment:
 globalTemplateEnv = TemplateEnvironment()
 
 
-class specificTaskParameters:
+class taskParameters:
     def __init__(self,fileName,fileExt,tableName):
         self.__fileName = fileName
         self.__fileExt = fileExt
         self.__tableName = tableName
         
-
     def getFileName(self):
         return self.__fileName
     
