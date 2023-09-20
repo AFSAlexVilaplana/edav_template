@@ -32,20 +32,23 @@ class TemplateEnvironment:
 globalTemplateEnv = TemplateEnvironment()
 
 
-class taskParameters:
-    def __init__(self,fileName,fileExt,tableName):
-        self.__fileName = fileName
-        self.__fileExt = fileExt
-        self.__tableName = tableName
+class persistantTaskParameters:
+    def __init__(self):
+        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "source_name",debugValue="test_source_name")
+        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "file_ext",debugValue="test_file_ext")
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "dest_table_prefix",debugValue = 'test_dest_table')
         
-    def getFileName(self):
-        return self.__fileName
+    def getSourceName(self):
+        return self.__sourceName
     
     def getFileExt(self):
         return self.__fileExt
     
     def getTableNamePrefix(self):
         return self.__tableName
+
+globalPersistentTaskParameters = persistantTaskParameters()
+
 
 # COMMAND ----------
 

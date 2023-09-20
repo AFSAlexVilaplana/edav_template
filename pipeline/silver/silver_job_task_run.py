@@ -8,7 +8,9 @@
 
 # COMMAND ----------
 
-df = createSilverDataframe("diabetestest_bronze",globalDataLakeConfig)
 
-createSilverTable("diabetestest_silver",df,globalDataLakeConfig)
+
+df = createSilverDataframe(globalPersistentTaskParameters.getTableNamePrefix()+'_bronze',globalDataLakeConfig)
+
+createSilverTable(globalPersistentTaskParameters.getTableNamePrefix()+'_silver',df,globalDataLakeConfig)
 
