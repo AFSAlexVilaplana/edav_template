@@ -8,7 +8,7 @@
 
 # COMMAND ----------
 
-df = createGoldDataframe("diabetestest_silver",globalDataLakeConfig)
+df = createGoldDataframe(globalPersistentTaskParameters.getTableNamePrefix()+'_silver',globalDataLakeConfig)
 
-createGoldTable("diabetestest_gold",df,globalDataLakeConfig)
+createGoldTable(globalPersistentTaskParameters.getTableNamePrefix()+'_gold',df,globalDataLakeConfig)
 

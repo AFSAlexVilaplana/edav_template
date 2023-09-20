@@ -10,13 +10,9 @@
 
 
 
-# COMMAND ----------
+df = createBronzeDataframe(globalPersistentTaskParameters.getSourceName(),globalDataLakeConfig,globalPersistentTaskParameters.getFileExt())
 
-
-
-df = createBronzeDataframe(specificTaskParameters.getFileName(),globalDataLakeConfig,specificTaskParameters.getFileExt())
-
-createBronzeTable(specificTaskParameters.getTableName(),df,globalDataLakeConfig)
+createBronzeTable(globalPersistentTaskParameters.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig)
 
 
 

@@ -8,7 +8,7 @@
 # COMMAND ----------
 
 def createSilverDataframe(tableName: str, dataLakeConfig: object):
-
+    assert "_bronze" == tableName[-7:], "tableName argument must contain _bronze suffix"
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFromTable(tableName)
      

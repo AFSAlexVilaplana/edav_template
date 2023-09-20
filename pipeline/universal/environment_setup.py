@@ -8,17 +8,16 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 
-dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-
-
+# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 class TemplateEnvironment:
     def __init__(self):
-        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="readFilePath",debugValue= os.getenv("read_file_path").strip())
-        self.__database = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="database",debugValue= os.getenv("database"))
-        self.__database_folder = dbutils.jobs.taskValues.get(taskKey='set_up_params',key='database_folder',debugValue = os.getenv("database_folder"))
-        self.__scope = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
+        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
+        self.__database = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="database",debugValue= os.getenv("database"))
+        self.__database_folder = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
+        self.__scope = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
         
 
     def getReadFilePath(self):
@@ -32,20 +31,23 @@ class TemplateEnvironment:
 globalTemplateEnv = TemplateEnvironment()
 
 
-class specificTaskParameters:
+class persistantTaskParameters:
     def __init__(self):
-        self.__fileName = dbutils.widgets.get("file_name")
-        self.__fileExt = dbutils.widgets.get("file_ext")
-        self.__tableName = dbutils.widgets.get("table_name")
+        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="test_source_name")
+        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="test_file_ext")
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'test_dest_table')
         
-    def getFileName(self):
-        return self.__fileName
+    def getSourceName(self):
+        return self.__sourceName
     
     def getFileExt(self):
         return self.__fileExt
     
-    def getTableName(self):
+    def getTableNamePrefix(self):
         return self.__tableName
+
+globalPersistentTaskParameters = persistantTaskParameters()
+
 
 # COMMAND ----------
 
@@ -55,8 +57,7 @@ class dataLakeConfig:
         self.__readFilePath = readFilePath
         self.__dbName = dbName
         self.__rootDir = rootDir     
-        
-    
+
     def getTable(self,tableName):
         
         return f"{self.__dbName}.{tableName}"
