@@ -3,6 +3,10 @@
 
 # COMMAND ----------
 
+# MAGIC %run ./job_params
+
+# COMMAND ----------
+
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
@@ -11,14 +15,12 @@ from pyspark.sql.types import *
 dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 
-
-
 class TemplateEnvironment:
     def __init__(self):
-        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="readFilePath",debugValue= os.getenv("read_file_path").strip())
-        self.__database = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="database",debugValue= os.getenv("database"))
-        self.__database_folder = dbutils.jobs.taskValues.get(taskKey='set_up_params',key='database_folder',debugValue = os.getenv("database_folder"))
-        self.__scope = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
+        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
+        self.__database = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey,key="database",debugValue= os.getenv("database"))
+        self.__database_folder = dbutils.jobs.taskValues.get(globalSetupTaskKey = taskKey,key='database_folder',debugValue = os.getenv("database_folder"))
+        self.__scope = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
         
 
     def getReadFilePath(self):
