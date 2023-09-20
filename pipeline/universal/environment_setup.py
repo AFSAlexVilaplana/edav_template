@@ -3,24 +3,21 @@
 
 # COMMAND ----------
 
-# MAGIC %run ./job_params
-
-# COMMAND ----------
-
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 
-dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+setupTaskKeyt = dbutils.widgets.get("initial_task_key")
 
 class TemplateEnvironment:
     def __init__(self):
-        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
-        self.__database = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey,key="database",debugValue= os.getenv("database"))
-        self.__database_folder = dbutils.jobs.taskValues.get(globalSetupTaskKey = taskKey,key='database_folder',debugValue = os.getenv("database_folder"))
-        self.__scope = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
+        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = setupTaskKeyt,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
+        self.__database = dbutils.jobs.taskValues.get(taskKey = setupTaskKeyt,key="database",debugValue= os.getenv("database"))
+        self.__database_folder = dbutils.jobs.taskValues.get(setupTaskKeyt = taskKey,key='database_folder',debugValue = os.getenv("database_folder"))
+        self.__scope = dbutils.jobs.taskValues.get(taskKey = setupTaskKeyt, key = "scope_name", debugValue = os.getenv("scope_name"))
         
 
     def getReadFilePath(self):
@@ -36,9 +33,9 @@ globalTemplateEnv = TemplateEnvironment()
 
 class persistantTaskParameters:
     def __init__(self):
-        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey, key = "source_name",debugValue="test_source_name")
-        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey, key = "file_ext",debugValue="test_file_ext")
-        self.__tableName = dbutils.jobs.taskValues.get(taskKey = globalSetupTaskKey, key = "dest_table_prefix",debugValue = 'test_dest_table')
+        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKeyt, key = "source_name",debugValue="test_source_name")
+        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKeyt, key = "file_ext",debugValue="test_file_ext")
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKeyt, key = "dest_table_prefix",debugValue = 'test_dest_table')
         
     def getSourceName(self):
         return self.__sourceName

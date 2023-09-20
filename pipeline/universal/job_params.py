@@ -1,9 +1,6 @@
 # Databricks notebook source
 import os
-#dbutils.widgets.dropdown("task_key","test",["test"])
-# dbutils.widgets.dropdown("source_name","test",["test"])
-# dbutils.widgets.dropdown("file_ext","test",["test"])
-# dbutils.widgets.dropdown("dest_table_prefix","test",["test"])
+
 
 dbutils.jobs.taskValues.set(key = "database", value = os.getenv("database"))
 dbutils.jobs.taskValues.set(key = "database_folder", value = os.getenv("database_folder"))
@@ -14,5 +11,4 @@ dbutils.jobs.taskValues.set(key = "file_ext", value = dbutils.widgets.get("file_
 dbutils.jobs.taskValues.set(key = "dest_table_prefix", value = dbutils.widgets.get("dest_table_prefix"))
 
 
-globalSetupTaskKey = dbutils.widgets.get("task_key")
 
