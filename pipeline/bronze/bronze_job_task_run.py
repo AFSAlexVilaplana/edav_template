@@ -9,13 +9,6 @@
 # COMMAND ----------
 
 
-task_name = dbutils.widgets.get("task_name")
-
-
-
-# COMMAND ----------
-
-
 
 df = createBronzeDataframe(globalPersistentTaskParameters.getSourceName(),globalDataLakeConfig,globalPersistentTaskParameters.getFileExt())
 
