@@ -6,54 +6,65 @@
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-#############################below to be implemented for jobs##########################
-# class templateEnvironment:
-#     database = dbutils.jobs.taskValues.get(taskKey = 'set_up_params',key="database",debugValue= os.getenv("database)"))
-#     database_folder = dbutils.jobs.taskValues.get(taskKey='set_up_params',key='database_folder',debugValue = os.getenv("database_folder"))
-#     scope_name = dbutils.jobs.taskValues.get(taskKey = "set_up_params", key = "scope_name", debugValue = os.getenv("scope_name"))
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 
 
+# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 class TemplateEnvironment:
     def __init__(self):
-        self.__readFilePath = dbutils.widgets.get("read_file_path")
-        self.__writeFilePath = dbutils.widgets.get("write_file_path")
-        self.__database = os.getenv("database")
-        self.__database_folder = os.getenv("database_folder")
+        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
+        self.__database = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="database",debugValue= os.getenv("database"))
+        self.__database_folder = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
+        self.__scope = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
+        
+
     def getReadFilePath(self):
         return self.__readFilePath
-    def getWriteFilePath(self):
-        return self.__writeFilePath
     def getDatabase(self):
         return self.__database
     def getDatabaseFolder(self):
         return self.__database_folder
+
     
 globalTemplateEnv = TemplateEnvironment()
 
 
+class persistantTaskParameters:
+    def __init__(self):
+        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="test_source_name")
+        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="test_file_ext")
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'test_dest_table')
+        
+    def getSourceName(self):
+        return self.__sourceName
+    
+    def getFileExt(self):
+        return self.__fileExt
+    
+    def getTableNamePrefix(self):
+        return self.__tableName
+
+globalPersistentTaskParameters = persistantTaskParameters()
 
 
 # COMMAND ----------
 
 class dataLakeConfig:
     
-    def __init__(self,readFilePath,writeFilePath,dbName,rootDir):
+    def __init__(self,readFilePath,dbName,rootDir):
         self.__readFilePath = readFilePath
-        self.__writeFilePath = writeFilePath
         self.__dbName = dbName
-        self.__rootDir = rootDir
-    
+        self.__rootDir = rootDir     
+
     def getTable(self,tableName):
         
         return f"{self.__dbName}.{tableName}"
     
     def getWritePath(self,tableName):
         
-        return f"{self.__writeFilePath}{tableName}/"
+        return f"{self.__rootDir}{tableName}/"
     
     def getReadPath(self,fileName):
         
@@ -66,6 +77,7 @@ class dataLakeConfig:
     def getRootDir(self):
         
         return self.__rootDir
+    
     
     
 class dataLakeConnection:
@@ -108,7 +120,6 @@ class dataLakeConnection:
 
 
 globalDataLakeConfig = dataLakeConfig(readFilePath=globalTemplateEnv.getReadFilePath()
-                                      ,writeFilePath=globalTemplateEnv.getWriteFilePath()
                                       ,dbName = globalTemplateEnv.getDatabase()
                                       ,rootDir = globalTemplateEnv.getDatabaseFolder()
                                       )
