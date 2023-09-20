@@ -9,6 +9,6 @@ dbutils.jobs.taskValues.set(key = "readFilePath", value = os.getenv("read_file_p
 dbutils.jobs.taskValues.set(key = "source_name", value = dbutils.widgets.get("source_name"))
 dbutils.jobs.taskValues.set(key = "file_ext", value = dbutils.widgets.get("file_ext"))
 dbutils.jobs.taskValues.set(key = "dest_table_prefix", value = dbutils.widgets.get("dest_table_prefix"))
-
+dbutils.jobs.taskValues.set(key = "load_type", value = dbutils.widgets.get("load_type"))
 
 

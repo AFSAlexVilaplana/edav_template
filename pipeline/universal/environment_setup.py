@@ -33,9 +33,13 @@ globalTemplateEnv = TemplateEnvironment()
 
 class persistantTaskParameters:
     def __init__(self):
+        self.__loadType = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="load_type")
         self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="test_source_name")
         self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="test_file_ext")
         self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'test_dest_table')
+        
+    def getloadType(self):
+        return self.__loadType
         
     def getSourceName(self):
         return self.__sourceName
@@ -92,9 +96,12 @@ class dataLakeConnection:
         else:
             return spark.read.format(fileformat.lower()).option("header","true").option("multiline","true").option("inferschema","true").load(self.dataLakeConfig.getReadPath(fileName))
         
-    def writeFileToTable(self,df,tableName):
-       
-        return df.write.format("delta").mode("append").option("mergeSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
+    #### Need to revisit #### 
+    # def writeFileToTable(self,df,tableName,load_type):
+    #     if load_type == "full":
+    #         return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
+    #     else:
+    #         return df.write.format("delta").mode("append").option("mergeSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
     
 
     def readFromTable(self,tableName):
@@ -102,13 +109,12 @@ class dataLakeConnection:
         return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName))
     
     #depending on size it is probably best to write directly to delta file rather than pull in table data for comparison
-    def writeToTable(self,df,tableName):
-
-        return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
+    def writeToTable(self,df,tableName,load_type):
+        if load_type == "full":
+            return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
+        else:
+            return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
     
-    def overwriteTable(self,df,tableName):
-        
-        return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
     
 
 

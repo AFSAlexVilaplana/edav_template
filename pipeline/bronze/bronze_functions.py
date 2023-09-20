@@ -14,11 +14,11 @@ def createBronzeDataframe(fileName: str,dataLakeConfig: object,fileFormat: str,s
     
     return df
 
-def createBronzeTable(tableName: str, df: object ,dataLakeConfig: object):
+def createBronzeTable(tableName: str, df: object ,dataLakeConfig: object,loadType: str):
     assert "_bronze" == tableName[-7:], "tableName argument must contain _bronze suffix"
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
-    dataLakeConn.writeToTable(df,tableName)
+    dataLakeConn.writeToTable(df,tableName,loadType)
 
         
 
