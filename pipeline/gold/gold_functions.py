@@ -18,7 +18,7 @@ def createGoldDataframe(tableName: str, dataLakeConfig: object):
 
 def createGoldTable(tableName: str,df: object, dataLakeConfig: object,loadType: str):
     assert "_gold" == tableName[-5:], "tableName argument must contain _gold suffix"
-    
+    assert loadType in ["full","incremental"], "loadType needs to be 'full' or 'incremental'"
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     dataLakeConn.writeToTable(df,tableName,loadType)

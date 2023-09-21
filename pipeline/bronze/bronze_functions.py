@@ -16,6 +16,7 @@ def createBronzeDataframe(fileName: str,dataLakeConfig: object,fileFormat: str,s
 
 def createBronzeTable(tableName: str, df: object ,dataLakeConfig: object,loadType: str):
     assert "_bronze" == tableName[-7:], "tableName argument must contain _bronze suffix"
+    assert loadType in ["full","incremental"], "loadType needs to be 'full' or 'incremental'"
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     dataLakeConn.writeToTable(df,tableName,loadType)
