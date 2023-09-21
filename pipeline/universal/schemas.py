@@ -14,7 +14,7 @@ schema_diabetes_bronze = StructType([
     StructField("BMI",DoubleType(),False),
     StructField("DiabetesPedigreeFunction",DoubleType(),False),
     StructField("Age",IntegerType(),False),
-    StructField("Outcomes",IntegerType(),False)
+    StructField("Outcome",IntegerType(),False)
 ]
 )
 
