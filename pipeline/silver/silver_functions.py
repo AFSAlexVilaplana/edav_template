@@ -17,10 +17,10 @@ def createSilverDataframe(tableName: str, dataLakeConfig: object):
     
     return df
 
-def createSilverTable(tableName: str,df: object, dataLakeConfig: object):
+def createSilverTable(tableName: str,df: object, dataLakeConfig: object,loadType: str):
     assert "_silver" == tableName[-7:], "tableName argument must contain _silver suffix"
-    
+    assert loadType in ["full","incremental"], "loadType needs to be 'full' or 'incremental'"
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
-    dataLakeConn.writeToTable(df,tableName)
+    dataLakeConn.writeToTable(df,tableName,loadType)
    

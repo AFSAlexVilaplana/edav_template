@@ -10,5 +10,5 @@
 
 df = createGoldDataframe(globalPersistentTaskParameters.getTableNamePrefix()+'_silver',globalDataLakeConfig)
 
-createGoldTable(globalPersistentTaskParameters.getTableNamePrefix()+'_gold',df,globalDataLakeConfig)
+createGoldTable(globalPersistentTaskParameters.getTableNamePrefix()+'_gold',df,globalDataLakeConfig,globalPersistentTaskParameters.getloadType())
 

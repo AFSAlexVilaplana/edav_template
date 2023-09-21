@@ -12,5 +12,5 @@
 
 df = createSilverDataframe(globalPersistentTaskParameters.getTableNamePrefix()+'_bronze',globalDataLakeConfig)
 
-createSilverTable(globalPersistentTaskParameters.getTableNamePrefix()+'_silver',df,globalDataLakeConfig)
+createSilverTable(globalPersistentTaskParameters.getTableNamePrefix()+'_silver',df,globalDataLakeConfig,globalPersistentTaskParameters.getloadType())
 
