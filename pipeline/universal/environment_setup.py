@@ -6,11 +6,16 @@
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+import functools
 
-
-# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+dbutils.widgets.removeAll()
+dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
+dbutils.widgets.dropdown("specific_folder_path","healthcare-diabetes/",["healthcare-diabetes/"])
 setupTaskKey = dbutils.widgets.get("initial_task_key")
+
+
 
 class TemplateEnvironment:
     def __init__(self):
@@ -18,7 +23,6 @@ class TemplateEnvironment:
         self.__database = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="database",debugValue= os.getenv("database"))
         self.__database_folder = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
         self.__scope = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
-        
 
     def getReadFilePath(self):
         return self.__readFilePath
@@ -27,16 +31,16 @@ class TemplateEnvironment:
     def getDatabaseFolder(self):
         return self.__database_folder
 
-    
-globalTemplateEnv = TemplateEnvironment()
 
+    
 
 class persistantTaskParameters:
     def __init__(self):
-        self.__loadType = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="load_type")
-        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="test_source_name")
-        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="test_file_ext")
-        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'test_dest_table')
+        self.__loadType = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="full")
+        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="healthcare-diabetes/")
+        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="csv")
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'diabetestest')
+
         
     def getloadType(self):
         return self.__loadType
@@ -50,7 +54,6 @@ class persistantTaskParameters:
     def getTableNamePrefix(self):
         return self.__tableName
 
-globalPersistentTaskParameters = persistantTaskParameters()
 
 
 # COMMAND ----------
@@ -70,7 +73,7 @@ class dataLakeConfig:
         
         return f"{self.__rootDir}{tableName}/"
     
-    def getReadPath(self,fileName):
+    def getFilePath(self,fileName):
         
         return f"{self.__readFilePath}{fileName}"
     
@@ -82,6 +85,10 @@ class dataLakeConfig:
         
         return self.__rootDir
     
+    def getReadFilePath(self):
+        
+        return self.__readFilePath
+    
     
     
 class dataLakeConnection:
@@ -89,26 +96,33 @@ class dataLakeConnection:
     def __init__(self,dataLakeConfig):
         self.dataLakeConfig = dataLakeConfig
     
-    def readFileFrom(self,fileName,fileformat,schema=''):
-        assert fileformat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
-        if schema:
-            return spark.read.format(fileformat.lower()).option("header","true").option("multiline","true").schema(schema).load(self.dataLakeConfig.getReadPath(fileName))
-        else:
-            return spark.read.format(fileformat.lower()).option("header","true").option("multiline","true").option("inferschema","true").load(self.dataLakeConfig.getReadPath(fileName))
+    def readFileFrom(self,sourceName,fileFormat,schema=''):
+        assert fileFormat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
         
-    #### Need to revisit #### 
-    # def writeFileToTable(self,df,tableName,load_type):
-    #     if load_type == "full":
-    #         return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
-    #     else:
-    #         return df.write.format("delta").mode("append").option("mergeSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
-    
+        
+        newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
+        newFileFolder = newFileRootPath + sorted([x.name for x in dbutils.fs.ls(newFileRootPath)],reverse=True)[0]
+        
+        if fileFormat != "delta":
+            newFiles = dbutils.fs.ls(newFileFolder)
+            
+            newFileList = [x.name for x in newFiles]
+           
+            if schema:
+                
+                combineDf = functools.reduce(lambda df,df1: df.union(df1),
+                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
+                return combineDf
 
+        if schema:
+            df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
+            return df
+    
     def readFromTable(self,tableName):
         
         return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName))
     
-    #depending on size it is probably best to write directly to delta file rather than pull in table data for comparison
+
     def writeToTable(self,df,tableName,load_type):
         if load_type == "full":
             return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
@@ -125,8 +139,15 @@ class dataLakeConnection:
 # COMMAND ----------
 
 
+globalTemplateEnv = TemplateEnvironment()
+
+
+
 globalDataLakeConfig = dataLakeConfig(readFilePath=globalTemplateEnv.getReadFilePath()
                                       ,dbName = globalTemplateEnv.getDatabase()
                                       ,rootDir = globalTemplateEnv.getDatabaseFolder()
                                       )
+
+globalPersistentTaskParameters = persistantTaskParameters()
+
 
