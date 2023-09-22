@@ -115,6 +115,7 @@ class dataLakeConnection:
         
         df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
 
+        return df
     
     def readFromTable(self,tableName):
         
