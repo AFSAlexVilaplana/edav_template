@@ -8,11 +8,11 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 import functools
 
-# dbutils.widgets.removeAll()
-# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-# dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
+dbutils.widgets.removeAll()
+dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
+dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
 setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 
