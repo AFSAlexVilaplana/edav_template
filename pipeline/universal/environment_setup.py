@@ -107,15 +107,14 @@ class dataLakeConnection:
             
             newFileList = [x.name for x in newFiles]
            
-            if schema:
-                
-                combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
-                return combineDf
 
-        if schema:
-            df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
-            return df
+            combineDf = functools.reduce(lambda df,df1: df.union(df1),
+                        [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
+            return combineDf
+
+        
+        df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
+
     
     def readFromTable(self,tableName):
         
