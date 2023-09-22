@@ -8,11 +8,11 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 import functools
 
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-dbutils.widgets.dropdown("specific_folder_path","healthcare-diabetes/",["healthcare-diabetes/"])
+# dbutils.widgets.removeAll()
+# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
+# dbutils.widgets.dropdown("specific_folder_path","healthcare-diabetes/",["healthcare-diabetes/"])
 setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 
@@ -96,9 +96,8 @@ class dataLakeConnection:
     def __init__(self,dataLakeConfig):
         self.dataLakeConfig = dataLakeConfig
     
-    def readFileFrom(self,sourceName,fileFormat,schema=''):
+    def readFileFrom(self,sourceName,fileFormat,schema):
         assert fileFormat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
-        
         
         newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
         newFileFolder = newFileRootPath + sorted([x.name for x in dbutils.fs.ls(newFileRootPath)],reverse=True)[0]
