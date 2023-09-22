@@ -13,7 +13,7 @@ def createSilverDataframe(tableName: str, dataLakeConfig: object):
     df = dataLakeConn.readFromTable(tableName)
      
     #example manipulations
-    df = df.drop(*schema_diabetes_silver_drop_cols).dropDuplicates(diabetes_silver_identity_cols)
+    #df = df.drop(*schema_diabetes_silver_drop_cols).dropDuplicates(diabetes_silver_identity_cols)
     
     return df
 
