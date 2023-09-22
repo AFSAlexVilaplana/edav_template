@@ -11,7 +11,7 @@ def createBronzeDataframe(fileName: str,dataLakeConfig: object,fileFormat: str,s
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFileFrom(fileName,fileFormat,schema)
-    
+
     return df
 
 def createBronzeTable(tableName: str, df: object ,dataLakeConfig: object,loadType: str):

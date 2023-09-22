@@ -12,7 +12,7 @@ import functools
 # dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 # dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 # dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-# dbutils.widgets.dropdown("specific_folder_path","healthcare-diabetes/",["healthcare-diabetes/"])
+# dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
 setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 
@@ -37,9 +37,9 @@ class TemplateEnvironment:
 class persistantTaskParameters:
     def __init__(self):
         self.__loadType = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="full")
-        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="healthcare-diabetes/")
-        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="csv")
-        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'diabetestest')
+        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="constructor/")
+        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="json")
+        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'constructor')
 
         
     def getloadType(self):
@@ -106,7 +106,7 @@ class dataLakeConnection:
             newFiles = dbutils.fs.ls(newFileFolder)
             
             newFileList = [x.name for x in newFiles]
-           
+
             if schema:
 
                 combineDf = functools.reduce(lambda df,df1: df.union(df1),
@@ -114,10 +114,10 @@ class dataLakeConnection:
                 return combineDf
             
             else:
-
+                    #revisit multiline issue for json
                 combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
-
+                            [spark.read.format(fileFormat.lower()).option("header","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
+                return combineDf
 
         if schema:
 
