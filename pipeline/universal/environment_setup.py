@@ -96,7 +96,7 @@ class dataLakeConnection:
     def __init__(self,dataLakeConfig):
         self.dataLakeConfig = dataLakeConfig
     
-    def readFileFrom(self,sourceName,fileFormat,schema):
+    def readFileFrom(self,sourceName,fileFormat,schema=''):
         assert fileFormat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
         
         newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
@@ -107,13 +107,25 @@ class dataLakeConnection:
             
             newFileList = [x.name for x in newFiles]
            
+            if schema:
 
-            combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                        [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
-            return combineDf
+                combineDf = functools.reduce(lambda df,df1: df.union(df1),
+                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
+                return combineDf
+            
+            else:
 
-        
-        df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
+                combineDf = functools.reduce(lambda df,df1: df.union(df1),
+                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
+
+
+        if schema:
+
+            df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
+
+        else:
+
+             df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder)
 
         return df
     
