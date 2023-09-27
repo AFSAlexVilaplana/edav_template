@@ -3,6 +3,33 @@ from pyspark.sql.types import *
 
 # COMMAND ----------
 
+schemaConfig = StructType([
+
+    StructField("sourceAccount",StringType(),False),
+    StructField("sourceContainer",StringType(),False),
+    StructField("sourceName",StringType(),False),
+    StructField("targetAccount",StringType(),False),
+    StructField("targetContainer",StringType(),False),
+    StructField("targetName",StringType(),False),
+    StructField("secretScope",StringType(),False),
+    StructField("secretName",StringType(),False),
+    StructField("databaseName",StringType(),False),
+    StructField("tableName",StringType(),False)
+    
+])
+
+configTableSchema = StructType([
+
+    StructField("bronzeConfig",ArrayType(schemaConfig),False),
+    StructField("silverConfig",ArrayType(schemaConfig),False),
+    StructField("goldConfig",ArrayType(schemaConfig),False)
+
+    
+])
+
+
+# COMMAND ----------
+
 schema_diabetes_bronze = StructType([
     StructField("id",IntegerType(),False),
     StructField("Pregnancies",IntegerType(),False),
