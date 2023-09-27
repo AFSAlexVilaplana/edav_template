@@ -1,9 +1,13 @@
 # Databricks notebook source
 import requests
 import json
+from random import randrange
+import os
 
-paramList = [['csv','full','healthcare-diabetes/','diabetestest'],['json','full','constructor/','constructor']]
-token = 'dapie640c593a38bdb223dd74cc3fe2de77c-3'
+n = randrange(1,100)
+
+paramList = [['csv','incremental','healthcare-diabetes/',f'diabetestest{n}'],['json','incremental','constructor/',f'constructor{n}']]
+token = dbutils.secrets.get(scope="cmod_s3t8_kv_eus",key='dbx-pat')
 
            
 
@@ -11,7 +15,7 @@ dbutils.widgets.dropdown('job_id','548390818274247',['548390818274247'])
 
 workspace = spark.conf.get("spark.databricks.workspaceUrl")
 url = f"https://{workspace}/api/2.0/jobs/run-now"
-print(url)
+
 job_id = dbutils.widgets.get("job_id")
 cluster_id = spark.conf.get("spark.databricks.clusterUsageTags.clusterId")
 
@@ -29,7 +33,7 @@ for params in paramList:
         
     }
     response = requests.post(url,headers={"Authorization":f"Bearer {token}"},json=payload)
-    print(response.text)
+    print(response.text,parameters.get('dest_table_prefix'))
 
 
 
