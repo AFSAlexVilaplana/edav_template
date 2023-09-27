@@ -8,13 +8,13 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 import functools
 
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
+# dbutils.widgets.removeAll()
+# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
+# dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
 setupTaskKey = dbutils.widgets.get("initial_task_key")
-
+test = dbutils.widgets.get("tst_key")
 
 
 class TemplateEnvironment:
@@ -137,9 +137,9 @@ class dataLakeConnection:
 
     def writeToTable(self,df,tableName,load_type):
         if load_type == "full":
-            return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
+            return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
         else:
-            return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
+            return df.write.format("delta").mode("append").option("overwriteSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
     
     
 
