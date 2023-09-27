@@ -97,6 +97,7 @@ class dataLakeConnection:
         self.dataLakeConfig = dataLakeConfig
     
     def readFileFrom(self,sourceName,fileFormat,schema=''):
+        fileFormat = fileFormat.lower()
         assert fileFormat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
         
         newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
