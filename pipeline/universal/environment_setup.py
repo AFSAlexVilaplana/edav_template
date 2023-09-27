@@ -15,6 +15,7 @@ import functools
 # dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
 setupTaskKey = dbutils.widgets.get("initial_task_key")
 test = dbutils.widgets.get("tst_key")
+print(test)
 
 
 class TemplateEnvironment:
