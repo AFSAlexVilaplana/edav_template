@@ -137,9 +137,9 @@ class dataLakeConnection:
 
     def writeToTable(self,df,tableName,load_type):
         if load_type == "full":
-            return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
+            return df.write.format("delta").mode("overwrite").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
         else:
-            return df.write.format("delta").mode("append").option("overwriteSchema","true").save(self.dataLakeConfig.getWritePath(tableName))
+            return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
     
     
 
