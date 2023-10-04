@@ -27,19 +27,6 @@ class TemplateEnvironment:
         #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
         self.__scope = dbutils.widgets.get("scope")
         #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
-
-    def getReadFilePath(self):
-        return self.__readFilePath
-    def getDatabase(self):
-        return self.__database
-    def getDatabaseFolder(self):
-        return self.__database_folder
-
-
-    
-
-class persistantTaskParameters:
-    def __init__(self):
         self.__loadType = dbutils.widgets.get("loadType")
         #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="full")
         self.__sourceName = dbutils.widgets.get("sourceName")
@@ -61,6 +48,17 @@ class persistantTaskParameters:
     
     def getTableNamePrefix(self):
         return self.__tableName
+    
+    def getReadFilePath(self):
+        return self.__readFilePath
+    
+    def getDatabase(self):
+        return self.__database
+    
+    def getDatabaseFolder(self):
+        return self.__database_folder
+
+
 
 
 
@@ -168,6 +166,6 @@ globalDataLakeConfig = dataLakeConfig(readFilePath=globalTemplateEnv.getReadFile
                                       ,rootDir = globalTemplateEnv.getDatabaseFolder()
                                       )
 
-globalPersistentTaskParameters = persistantTaskParameters()
+#globalPersistentTaskParameters = persistantTaskParameters()
 
 

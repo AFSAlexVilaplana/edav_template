@@ -1,14 +1,14 @@
 # Databricks notebook source
-import os
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("database_folder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
-dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
-dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
-dbutils.widgets.dropdown("fileExt","json",["json"])
-dbutils.widgets.dropdown("loadType","full",["full"])
-dbutils.widgets.dropdown("destTablePrefix","constructor999",["constructor999"])
+# import os
+# dbutils.widgets.removeAll()
+# dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("database_folder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+# dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+# dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
+# dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
+# dbutils.widgets.dropdown("fileExt","json",["json"])
+# dbutils.widgets.dropdown("loadType","full",["full"])
+# dbutils.widgets.dropdown("destTablePrefix","constructor997",["constructor997"])
 
 # COMMAND ----------
 
@@ -23,9 +23,9 @@ dbutils.widgets.dropdown("destTablePrefix","constructor999",["constructor999"])
 
 
 
-df = createBronzeDataframe(globalPersistentTaskParameters.getSourceName(),globalDataLakeConfig,globalPersistentTaskParameters.getFileExt())
+df = createBronzeDataframe(globalTemplateEnv.getSourceName(),globalDataLakeConfig,globalTemplateEnv.getFileExt())
 
-createBronzeTable(globalPersistentTaskParameters.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig, globalPersistentTaskParameters.getloadType())
+createBronzeTable(globalTemplateEnv.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig, globalTemplateEnv.getloadType())
 
 
 
