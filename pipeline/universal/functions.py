@@ -1,10 +1,5 @@
 # Databricks notebook source
-# Databricks notebook source
 from pyspark.sql.functions import current_timestamp
-
-def add_ingestion_date(input_df):
-  output_df = input_df.withColumn("ingestion_date", current_timestamp())
-  return output_df
 
 # COMMAND ----------
 
@@ -38,3 +33,20 @@ def df_column_to_list(input_df, column_name):
   return column_value_list
 
 
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ###generic transformations to be utilized by any notebook
+
+# COMMAND ----------
+
+#example "generic" function below
+def drop_cols_and_dupes(df: object,drop_cols: list,identity_cols: list):
+    df = df.drop(*drop_cols).dropDuplicates(identity_cols)
+    return df
+
+
+def add_ingestion_date(input_df):
+  output_df = input_df.withColumn("ingestion_date", current_timestamp())
+  return output_df

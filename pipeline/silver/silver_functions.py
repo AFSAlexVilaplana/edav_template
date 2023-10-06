@@ -3,17 +3,16 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../universal/schemas
+#might be best to leave dataframe manipulations to their respective notebooks because cases such as aggregating data would drop ingestion date unless specified in groupBy.
+#functions could have the "generic" transformations located in createSilverDataframe or in their respective notebooks
 
-# COMMAND ----------
-
-def createSilverDataframe(tableName: str, dataLakeConfig: object):
+def createSilverDataframe(tableName: str, dataLakeConfig: object,schema: str='', dropCols: list='', identityCols: list=''):
     assert "_bronze" == tableName[-7:], "tableName argument must contain _bronze suffix"
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFromTable(tableName)
-     
-    #example manipulations
-    df = df.drop(*schema_diabetes_silver_drop_cols).dropDuplicates(diabetes_silver_identity_cols)
+    if dropCols and identityCols:
+        df = drop_cols_and_dupes(df,dropCols,identityCols)
+    df = add_ingestion_date(df)
     
     return df
 
@@ -21,6 +20,7 @@ def createSilverTable(tableName: str,df: object, dataLakeConfig: object,loadType
     assert "_silver" == tableName[-7:], "tableName argument must contain _silver suffix"
     assert loadType in ["full","incremental"], "loadType needs to be 'full' or 'incremental'"
     
+
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     dataLakeConn.writeToTable(df,tableName,loadType)
    

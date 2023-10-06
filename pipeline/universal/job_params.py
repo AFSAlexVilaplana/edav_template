@@ -1,4 +1,9 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC # this notebook can likely be deleted since adf is orchestrator now
+
+# COMMAND ----------
+
 import os
 
 
