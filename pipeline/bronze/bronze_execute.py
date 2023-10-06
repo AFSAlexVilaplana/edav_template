@@ -8,7 +8,7 @@
 # dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
 # dbutils.widgets.dropdown("fileExt","json",["json"])
 # dbutils.widgets.dropdown("loadType","full",["full"])
-# dbutils.widgets.dropdown("destTablePrefix","constructor997",["constructor997"])
+# dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
 
 # COMMAND ----------
 
@@ -17,13 +17,15 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../universal/schemas
+# MAGIC %run ../universal/functions
 
 # COMMAND ----------
 
 
 
 df = createBronzeDataframe(globalTemplateEnv.getSourceName(),globalDataLakeConfig,globalTemplateEnv.getFileExt())
+
+
 
 createBronzeTable(globalTemplateEnv.getTableNamePrefix()+'_bronze',df,globalDataLakeConfig, globalTemplateEnv.getloadType())
 

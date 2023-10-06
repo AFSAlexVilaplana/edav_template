@@ -35,7 +35,8 @@ class TemplateEnvironment:
         #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="json")
         self.__tableName = dbutils.widgets.get("destTablePrefix")
         #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'constructor')
-
+        
+        #self.__notebookPath = dbutils.widgets.get("notebookPath")
         
     def getloadType(self):
         return self.__loadType
