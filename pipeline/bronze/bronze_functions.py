@@ -7,11 +7,12 @@
 
 # COMMAND ----------
 
-def createBronzeDataframe(fileName: str,dataLakeConfig: object,fileFormat: str,schema: object = ''):
+def createBronzeDataframe(fileName: str,dataLakeConfig: object,fileFormat: str,schema: str = ''):
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFileFrom(fileName,fileFormat,schema)
-    
+    df = add_ingestion_date(df)
+
     return df
 
 def createBronzeTable(tableName: str, df: object ,dataLakeConfig: object,loadType: str):

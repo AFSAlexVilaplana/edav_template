@@ -12,35 +12,31 @@ import functools
 # dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 # dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 # dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-# dbutils.widgets.dropdown("specific_folder_path","healthcare-diabetes/",["healthcare-diabetes/"])
-setupTaskKey = dbutils.widgets.get("initial_task_key")
+# dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
+#setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 
 
 class TemplateEnvironment:
     def __init__(self):
-        self.__readFilePath = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
-        self.__database = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="database",debugValue= os.getenv("database"))
-        self.__database_folder = dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
-        self.__scope = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
-
-    def getReadFilePath(self):
-        return self.__readFilePath
-    def getDatabase(self):
-        return self.__database
-    def getDatabaseFolder(self):
-        return self.__database_folder
-
-
-    
-
-class persistantTaskParameters:
-    def __init__(self):
-        self.__loadType = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="full")
-        self.__sourceName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="healthcare-diabetes/")
-        self.__fileExt = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="csv")
-        self.__tableName = dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'diabetestest')
-
+        self.__readFilePath = dbutils.widgets.get("readFilePath")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
+        self.__database = dbutils.widgets.get("database")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="database",debugValue= os.getenv("database"))
+        self.__database_folder = dbutils.widgets.get("database_folder")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
+        self.__scope = dbutils.widgets.get("scope")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
+        self.__loadType = dbutils.widgets.get("loadType")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="full")
+        self.__sourceName = dbutils.widgets.get("sourceName")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="constructor/")
+        self.__fileExt = dbutils.widgets.get("fileExt")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="json")
+        self.__tableName = dbutils.widgets.get("destTablePrefix")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'constructor')
+        
+        #self.__notebookPath = dbutils.widgets.get("notebookPath")
         
     def getloadType(self):
         return self.__loadType
@@ -53,6 +49,17 @@ class persistantTaskParameters:
     
     def getTableNamePrefix(self):
         return self.__tableName
+    
+    def getReadFilePath(self):
+        return self.__readFilePath
+    
+    def getDatabase(self):
+        return self.__database
+    
+    def getDatabaseFolder(self):
+        return self.__database_folder
+
+
 
 
 
@@ -97,6 +104,7 @@ class dataLakeConnection:
         self.dataLakeConfig = dataLakeConfig
     
     def readFileFrom(self,sourceName,fileFormat,schema=''):
+        fileFormat = fileFormat.lower()
         assert fileFormat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
         
         newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
@@ -106,7 +114,7 @@ class dataLakeConnection:
             newFiles = dbutils.fs.ls(newFileFolder)
             
             newFileList = [x.name for x in newFiles]
-           
+
             if schema:
 
                 combineDf = functools.reduce(lambda df,df1: df.union(df1),
@@ -114,10 +122,10 @@ class dataLakeConnection:
                 return combineDf
             
             else:
-
+                    #revisit multiline issue for json
                 combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
-
+                            [spark.read.format(fileFormat.lower()).option("header","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
+                return combineDf
 
         if schema:
 
@@ -159,6 +167,6 @@ globalDataLakeConfig = dataLakeConfig(readFilePath=globalTemplateEnv.getReadFile
                                       ,rootDir = globalTemplateEnv.getDatabaseFolder()
                                       )
 
-globalPersistentTaskParameters = persistantTaskParameters()
+#globalPersistentTaskParameters = persistantTaskParameters()
 
 
