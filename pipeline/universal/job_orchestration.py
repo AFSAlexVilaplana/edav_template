@@ -49,7 +49,8 @@ parameters = {
     "dropColumns": dbutils.widgets.get("dropColumns"),
     "identityColumns": dbutils.widgets.get("identityColumns"),
     "silverCustomNotebookPath": dbutils.widgets.get("silverCustomNotebookPath"),
-    "goldCustomNotebookPath": dbutils.widgets.get("goldCustomNotebookPath")
+    "goldCustomNotebookPath": dbutils.widgets.get("goldCustomNotebookPath"),
+    "bronzeCustomNotebookPath": dbutils.widgets.get("bronzeCustomNotebookPath")
     }
 payload = {
     "job_id": job_id,
