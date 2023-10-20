@@ -9,8 +9,8 @@
 # COMMAND ----------
 
 
-if not globalTemplateEnv.getSilverCustomNotebookPath():
-    globalTemplateEnv.setSilverCustomNotebookPath("/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_generic_execute")
+if not globalTemplateEnv.getBronzeCustomNotebookPath():
+    globalTemplateEnv.setBronzeCustomNotebookPath("/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/Bronze/bronze_generic_execute")
 
 
 params={
@@ -29,8 +29,8 @@ params={
 
 }
 
-dbutils.notebook.run(globalTemplateEnv.getSilverCustomNotebookPath(),0,params)
+dbutils.notebook.run(globalTemplateEnv.getBronzeCustomNotebookPath(),0,params)
 
-dbutils.notebook.exit(globalTemplateEnv.getSilverCustomNotebookPath())
+dbutils.notebook.exit(globalTemplateEnv.getBronzeCustomNotebookPath())
 
 
