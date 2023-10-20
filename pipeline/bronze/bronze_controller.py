@@ -10,7 +10,7 @@
 
 
 if not globalTemplateEnv.getBronzeCustomNotebookPath():
-    globalTemplateEnv.setBronzeCustomNotebookPath("/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/Bronze/bronze_generic_execute")
+    globalTemplateEnv.setBronzeCustomNotebookPath("/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/bronze/bronze_generic_execute")
 
 
 params={
