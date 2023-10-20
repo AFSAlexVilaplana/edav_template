@@ -6,24 +6,22 @@
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-import functools
 
-dbutils.widgets.removeAll()
-import os
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-#dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
-dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
-dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
-dbutils.widgets.dropdown("fileExt","json",["json"])
-dbutils.widgets.dropdown("loadType","full",["full","incremental"])
-dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
-dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
-dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
-dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
-dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
-dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
+
+# dbutils.widgets.removeAll()
+# dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+# #dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+# dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
+# dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
+# dbutils.widgets.dropdown("fileExt","json",["json"])
+# dbutils.widgets.dropdown("loadType","full",["full","incremental"])
+# dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
+# dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
+# dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
+# dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
+# dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
+# dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
 
 # dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])

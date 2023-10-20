@@ -8,7 +8,7 @@ dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('databas
 dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
 dbutils.widgets.dropdown("fileExt","json",["json"])
 dbutils.widgets.dropdown("loadType","full",["full","incremental"])
-dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
+dbutils.widgets.dropdown("destTablePrefix","constructor990",["constructor990"])
 dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
 dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
 dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
