@@ -21,7 +21,7 @@ params={
     "destTablePrefix": globalTemplateEnv.getDestTablePrefix(),
     "loadType": globalTemplateEnv.getloadType(),
     "dropColumns": globalTemplateEnv.getDropColumns(),
-    "identityColumns": globalTemplateEnv.getIdentityColumns,
+    "identityColumns": globalTemplateEnv.getIdentityColumns(),
     "silverCustomNotebookPath": globalTemplateEnv.getSilverCustomNotebookPath(),
     "goldCustomNotebookPath": globalTemplateEnv.getGoldCustomNotebookPath(),
     "bronzeCustomNotebookPath": globalTemplateEnv.getBronzeCustomNotebookPath()
