@@ -19,11 +19,12 @@
 
 # COMMAND ----------
 
-
+dropcols = globalTemplateEnv.getDropColumns().split(",")
+identitycol = globalTemplateEnv.getIdentityColumns().split(",")
 
 #dropcols and identitycol not added to below function because theyre not required. see the function work with these two arguments in the silver_generic_execute notebook
 
-df = createSilverDataframe(globalTemplateEnv.getDestTablePrefix()+'_bronze',globalDataLakeConfig)
+df = createSilverDataframe(globalTemplateEnv.getDestTablePrefix()+'_bronze',globalDataLakeConfig,dropCols=dropcols,identityCols=identitycol)
 
 #add constructor specific functionality here from the universal/functions notebook. or just whatever you come up with.
 

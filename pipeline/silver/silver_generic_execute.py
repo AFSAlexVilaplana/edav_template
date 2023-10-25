@@ -4,8 +4,12 @@
 
 # COMMAND ----------
 
-dropcols = globalTemplateEnv.getDropColumns()
-identitycol = globalTemplateEnv.getIdentityColumns()
+# MAGIC %run ../universal/functions
+
+# COMMAND ----------
+
+dropcols = globalTemplateEnv.getDropColumns().split(",")
+identitycol = globalTemplateEnv.getIdentityColumns().split(",")
 
 df = createSilverDataframe(globalTemplateEnv.getDestTablePrefix()+'_bronze',globalDataLakeConfig,dropCols=dropcols,identityCols=identitycol)
 

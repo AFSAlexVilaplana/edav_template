@@ -10,7 +10,7 @@ def createSilverDataframe(tableName: str, dataLakeConfig: object,schema: str='',
     assert "_bronze" == tableName[-7:], "tableName argument must contain _bronze suffix"
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFromTable(tableName)
-    if dropCols and identityCols:
+    if dropCols[0] and identityCols[0]:
         df = drop_cols_and_dupes(df,dropCols,identityCols)
     df = add_ingestion_date(df)
     
