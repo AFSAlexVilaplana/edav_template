@@ -4,15 +4,30 @@
 
 # COMMAND ----------
 
-import os
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("notebookPath","<add_path>",[f"<add_path>"])
+# MAGIC %run ../universal/environment_setup
 
 # COMMAND ----------
 
-params = {
+if not globalTemplateEnv.getGoldCustomNotebookPath():
+    globalTemplateEnv.setGoldCustomNotebookPath("/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_generic_execute")
+
+
+params={
+    "database": globalTemplateEnv.getDatabase(),
+    "databaseFolder": globalTemplateEnv.getDatabaseFolder(),
+    "sourceName": globalTemplateEnv.getSourceName(),
+    "readFilePath": globalTemplateEnv.getReadFilePath(),
+    "fileExt": globalTemplateEnv.getFileExt(),
+    "destTablePrefix": globalTemplateEnv.getDestTablePrefix(),
+    "loadType": globalTemplateEnv.getloadType(),
+    "dropColumns": globalTemplateEnv.getDropColumns(),
+    "identityColumns": globalTemplateEnv.getIdentityColumns(),
+    "silverCustomNotebookPath": globalTemplateEnv.getSilverCustomNotebookPath(),
+    "goldCustomNotebookPath": globalTemplateEnv.getGoldCustomNotebookPath(),
+    "bronzeCustomNotebookPath": globalTemplateEnv.getBronzeCustomNotebookPath()
 
 }
 
-df = dbutils.notebook.run(dbutils.widgets.get("notebookPath"),0,params)
+dbutils.notebook.run(globalTemplateEnv.getGoldCustomNotebookPath(),0,params)
 
+dbutils.notebook.exit(globalTemplateEnv.getGoldCustomNotebookPath())

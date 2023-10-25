@@ -1,5 +1,7 @@
 # Databricks notebook source
 from pyspark.sql.functions import current_timestamp
+from pyspark.sql import DataFrame
+import json
 
 # COMMAND ----------
 
@@ -43,6 +45,8 @@ def df_column_to_list(input_df, column_name):
 
 #example "generic" function below
 def drop_cols_and_dupes(df: object,drop_cols: list,identity_cols: list):
+    assert len(drop_cols) > 0, "drop columns cannot be empty"
+    assert len(identity_cols) > 0, "identity columns cannot be empty"
     df = df.drop(*drop_cols).dropDuplicates(identity_cols)
     return df
 
@@ -50,3 +54,25 @@ def drop_cols_and_dupes(df: object,drop_cols: list,identity_cols: list):
 def add_ingestion_date(input_df):
   output_df = input_df.withColumn("ingestion_date", current_timestamp())
   return output_df
+
+# COMMAND ----------
+
+# MAGIC %md Multiline and single json files
+
+# COMMAND ----------
+
+# def load_json(file_path: str) -> DataFrame:
+#     """Load JSON data from a file, whether it's multi-line or single-line."""
+
+#     with open(file_path, 'r') as f:
+#         content = f.readlines()
+
+#     #Check if the JSON is nulti-line
+#     is_multi_line = len(content) > 1 or any([line.strip().startswith('{') for line in content])
+
+#     if is_multi_line:
+#         # load as multi-line JSON
+#         return spark.read.option("multiline", "true").json(file_path)
+#     else:
+#         #load as single-line JSON
+#         return spark.read.json(file_path)

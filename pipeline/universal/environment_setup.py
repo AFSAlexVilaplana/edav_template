@@ -6,60 +6,103 @@
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
-import functools
+
 
 # dbutils.widgets.removeAll()
-# dbutils.widgets.dropdown("read_file_path",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-# dbutils.widgets.dropdown("write_file_path",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-# dbutils.widgets.dropdown("specific_folder_path","constructor/",["constructor/"])
-#setupTaskKey = dbutils.widgets.get("initial_task_key")
+# dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+# dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+# #dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+# dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
+# dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
+# dbutils.widgets.dropdown("fileExt","json",["json"])
+# dbutils.widgets.dropdown("loadType","full",["full","incremental"])
+# dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
+# dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
+# dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
+# dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
+# dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
+# dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
+
+# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
+
+
+# setupTaskKey = dbutils.widgets.get("initial_task_key")
 
 
 class TemplateEnvironment:
     def __init__(self):
-        self.__readFilePath = dbutils.widgets.get("readFilePath")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="readFilePath",debugValue= os.getenv("read_file_path").strip())
+        # self.__readFilePath = dbutils.widgets.get("readFilePath")
+        # self.__database = dbutils.widgets.get("database")
+        # self.__database_folder = dbutils.widgets.get("databaseFolder")
+        # self.__scope = dbutils.widgets.get("scope")
+        # self.__loadType = dbutils.widgets.get("loadType")
+        # self.__sourceName = dbutils.widgets.get("sourceName")
+        # self.__fileExt = dbutils.widgets.get("fileExt")
+        # self.__tableName = dbutils.widgets.get("destTablePrefix")
+
+        
         self.__database = dbutils.widgets.get("database")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key="database",debugValue= os.getenv("database"))
-        self.__database_folder = dbutils.widgets.get("database_folder")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key='database_folder',debugValue = os.getenv("database_folder"))
-        self.__scope = dbutils.widgets.get("scope")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "scope_name", debugValue = os.getenv("scope_name"))
-        self.__loadType = dbutils.widgets.get("loadType")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "load_type",debugValue="full")
+        self.__databaseFolder = dbutils.widgets.get("databaseFolder")
         self.__sourceName = dbutils.widgets.get("sourceName")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "source_name",debugValue="constructor/")
+        self.__readFilePath = dbutils.widgets.get("readFilePath").strip()
+        # dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key = "silverSchema", debugValue = dbutils.widgets.get("silverSchema"))
+        # dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key = "goldSchema", debugValue = dbutils.widgets.get("goldSchema"))
         self.__fileExt = dbutils.widgets.get("fileExt")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "file_ext",debugValue="json")
-        self.__tableName = dbutils.widgets.get("destTablePrefix")
-        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey, key = "dest_table_prefix",debugValue = 'constructor')
+        self.__destTablePrefix = dbutils.widgets.get("destTablePrefix")
+        self.__loadType = dbutils.widgets.get("loadType")
+        self.__dropColumns = dbutils.widgets.get("dropColumns")
+        self.__identityColumns = dbutils.widgets.get("identityColumns")
+        #dbutils.jobs.taskValues.get(taskKey = setupTaskKey,key = "bronzeCustomNotebookPath", debugValue = dbutils.widgets.get("bronzeCustomNotebookPath"))
+        self.__silverCustomNotebookPath = dbutils.widgets.get("silverCustomNotebookPath")
+        self.__goldCustomNotebookPath = dbutils.widgets.get("goldCustomNotebookPath")
+        self.__bronzeCustomNotebookPath = dbutils.widgets.get("bronzeCustomNotebookPath")
+
         
-        #self.__notebookPath = dbutils.widgets.get("notebookPath")
-        
-    def getloadType(self):
-        return self.__loadType
-        
-    def getSourceName(self):
-        return self.__sourceName
-    
-    def getFileExt(self):
-        return self.__fileExt
-    
-    def getTableNamePrefix(self):
-        return self.__tableName
-    
-    def getReadFilePath(self):
-        return self.__readFilePath
-    
     def getDatabase(self):
         return self.__database
     
     def getDatabaseFolder(self):
-        return self.__database_folder
+        return self.__databaseFolder
+    
+    def getSourceName(self):
+        return self.__sourceName
+    
+    def getReadFilePath(self):
+        return self.__readFilePath
+    
+    def getFileExt(self):
+        return self.__fileExt
 
-
+    def getDestTablePrefix(self):
+        return self.__destTablePrefix
+    
+    def getloadType(self):
+        return self.__loadType
+    
+    def getDropColumns(self):
+        return self.__dropColumns
+    
+    def getIdentityColumns(self):
+        return self.__identityColumns
+    
+    def getSilverCustomNotebookPath(self):
+        return self.__silverCustomNotebookPath
+    
+    def getGoldCustomNotebookPath(self):
+        return self.__goldCustomNotebookPath
+    
+    def getBronzeCustomNotebookPath(self):
+        return self.__bronzeCustomNotebookPath
+    
+    def setSilverCustomNotebookPath(self,path: str):
+        self.__silverCustomNotebookPath = path
+    
+    def setGoldCustomNotebookPath(self, path: str):
+        self.__goldCustomNotebookPath = path
+    
+    def setBronzeCustomNotebookPath(self,path: str):
+        self.__bronzeCustomNotebookPath = path
 
 
 
