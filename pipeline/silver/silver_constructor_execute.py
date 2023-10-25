@@ -11,23 +11,6 @@
 
 # COMMAND ----------
 
-# import os
-# dbutils.widgets.removeAll()
-# dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-# dbutils.widgets.dropdown("database_folder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
-# dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
-# dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
-# dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
-# dbutils.widgets.dropdown("fileExt","json",["json"])
-# dbutils.widgets.dropdown("loadType","full",["full","incremental"])
-# dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
-# dbutils.widgets.multiselect("dropCols","url",["url","constructorRef"])
-# dbutils.widgets.multiselect("identityCols","constructorId",['constructorId'])
-
-
-
-# COMMAND ----------
-
 # MAGIC %run ./silver_functions
 
 # COMMAND ----------
@@ -36,12 +19,12 @@
 
 # COMMAND ----------
 
-dropcols = dbutils.widgets.get("dropCols").split(",")
-identitycol = [dbutils.widgets.get("identityCols")]
+dropcols = globalTemplateEnv.getDropColumns().split(",")
+identitycol = globalTemplateEnv.getIdentityColumns().split(",")
 
 #dropcols and identitycol not added to below function because theyre not required. see the function work with these two arguments in the silver_generic_execute notebook
 
-df = createSilverDataframe(globalTemplateEnv.getTableNamePrefix()+'_bronze',globalDataLakeConfig)
+df = createSilverDataframe(globalTemplateEnv.getDestTablePrefix()+'_bronze',globalDataLakeConfig,dropCols=dropcols,identityCols=identitycol)
 
 #add constructor specific functionality here from the universal/functions notebook. or just whatever you come up with.
 
@@ -50,4 +33,4 @@ df = createSilverDataframe(globalTemplateEnv.getTableNamePrefix()+'_bronze',glob
 
 # COMMAND ----------
 
-createSilverTable(globalTemplateEnv.getTableNamePrefix()+'_silver',df,globalDataLakeConfig,globalTemplateEnv.getloadType())
+createSilverTable(globalTemplateEnv.getDestTablePrefix()+'_silver',df,globalDataLakeConfig,globalTemplateEnv.getloadType())

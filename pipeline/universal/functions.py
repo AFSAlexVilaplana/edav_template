@@ -45,6 +45,8 @@ def df_column_to_list(input_df, column_name):
 
 #example "generic" function below
 def drop_cols_and_dupes(df: object,drop_cols: list,identity_cols: list):
+    assert len(drop_cols) > 0, "drop columns cannot be empty"
+    assert len(identity_cols) > 0, "identity columns cannot be empty"
     df = df.drop(*drop_cols).dropDuplicates(identity_cols)
     return df
 

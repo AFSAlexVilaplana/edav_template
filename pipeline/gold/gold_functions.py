@@ -11,13 +11,12 @@
 
 #functions could have the "generic" transformations located in createGoldDataframe or in their respective notebooks
 
-def createGoldDataframe(tableName: str, dataLakeConfig: object,schema: str = '', dropCols: list='', identityCols: list=''):
+def createGoldDataframe(tableName: str, dataLakeConfig: object,schema: str = ''):
     assert "_silver" == tableName[-7:], "tableName argument must contain _silver suffix"
     
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     df = dataLakeConn.readFromTable(tableName)
-    if dropCols and identityCols:
-        df = drop_cols_and_dupes(df,dropCols,identityCols)
+
     df = add_ingestion_date(df)
      
         
