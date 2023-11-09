@@ -1,14 +1,14 @@
 # Databricks notebook source
-# MAGIC %run ./schemas
-
-# COMMAND ----------
-
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 
-# dbutils.widgets.removeAll()
+# COMMAND ----------
+
+########run below for testing
+
+#dbutils.widgets.removeAll()
 # dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 # dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 # #dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
@@ -16,7 +16,7 @@ from pyspark.sql.types import *
 # dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
 # dbutils.widgets.dropdown("fileExt","json",["json"])
 # dbutils.widgets.dropdown("loadType","full",["full","incremental"])
-# dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
+# dbutils.widgets.dropdown("destTablePrefix","constructor989",["constructor989"])
 # dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
 # dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
 # dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
@@ -24,11 +24,23 @@ from pyspark.sql.types import *
 # dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
 
-# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
+#####run below for actual job
+dbutils.widgets.removeAll()
+dbutils.widgets.dropdown("readFilePath",'',[""])
+dbutils.widgets.dropdown("databaseFolder",'',[''])
+#dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+dbutils.widgets.dropdown("database",'',[""])
+dbutils.widgets.dropdown("sourceName","",[""])
+dbutils.widgets.dropdown("fileExt","",[""])
+dbutils.widgets.dropdown("loadType","",[""])
+dbutils.widgets.dropdown("destTablePrefix","",[""])
+dbutils.widgets.multiselect("dropColumns","",[""])
+dbutils.widgets.multiselect("identityColumns","",[''])
+dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
+dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
+dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
-
-# setupTaskKey = dbutils.widgets.get("initial_task_key")
-
+# COMMAND ----------
 
 class TemplateEnvironment:
     def __init__(self):
