@@ -1,34 +1,45 @@
 # Databricks notebook source
-# MAGIC %run ./schemas
-
-# COMMAND ----------
-
 import os
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
+# COMMAND ----------
 
-# dbutils.widgets.removeAll()
-# dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
-# dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+########run below for testing
+
+#dbutils.widgets.removeAll()
+dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+#dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
+dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
+dbutils.widgets.dropdown("fileExt","json",["json"])
+dbutils.widgets.dropdown("loadType","full",["full","incremental"])
+dbutils.widgets.dropdown("destTablePrefix","constructor989",["constructor989"])
+dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
+dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
+dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
+dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
+dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
+
+
+#####run below for actual job
+## dbutils.widgets.removeAll()
+# dbutils.widgets.dropdown("readFilePath",'',[""])
+# dbutils.widgets.dropdown("databaseFolder",'',[''])
 # #dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
-# dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
-# dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
-# dbutils.widgets.dropdown("fileExt","json",["json"])
-# dbutils.widgets.dropdown("loadType","full",["full","incremental"])
-# dbutils.widgets.dropdown("destTablePrefix","constructor995",["constructor995"])
-# dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
-# dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
-# dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
-# dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
+# dbutils.widgets.dropdown("database",'',[""])
+# dbutils.widgets.dropdown("sourceName","",[""])
+# dbutils.widgets.dropdown("fileExt","",[""])
+# dbutils.widgets.dropdown("loadType","",[""])
+# dbutils.widgets.dropdown("destTablePrefix","",[""])
+# dbutils.widgets.multiselect("dropColumns","",[""])
+# dbutils.widgets.multiselect("identityColumns","",[''])
+# dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
+# dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
-
-# dbutils.widgets.dropdown("initial_task_key","set_up_params",["set_up_params"])
-
-
-# setupTaskKey = dbutils.widgets.get("initial_task_key")
-
+# COMMAND ----------
 
 class TemplateEnvironment:
     def __init__(self):
@@ -146,39 +157,47 @@ class dataLakeConnection:
     def __init__(self,dataLakeConfig):
         self.dataLakeConfig = dataLakeConfig
     
-    def readFileFrom(self,sourceName,fileFormat,schema=''):
+    def readFileFrom(self,sourceName,fileFormat,loadType,schema=''):
         fileFormat = fileFormat.lower()
+        loadType = loadType.lower()
         assert fileFormat in ['csv','delta','text','avro','json', 'parquet'], "arg must be one of ['csv','delta','text','avro','json','parquet']"
+        assert loadType in ['full','incremental'], "arg must be one of ['full','incremental']"
         
         newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
         newFileFolder = newFileRootPath + sorted([x.name for x in dbutils.fs.ls(newFileRootPath)],reverse=True)[0]
-        
         if fileFormat != "delta":
-            newFiles = dbutils.fs.ls(newFileFolder)
-            
-            newFileList = [x.name for x in newFiles]
+                newFiles = dbutils.fs.ls(newFileFolder)
+                
+                newFileList = [x.name for x in newFiles]
 
-            if schema:
+                if schema:
 
-                combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
-                return combineDf
-            
-            else:
-                    #revisit multiline issue for json
-                combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
-                return combineDf
+                    combineDf = functools.reduce(lambda df,df1: df.union(df1),
+                                [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
+                    return combineDf
+                
+                else:
+                        #revisit multiline issue for json
+                    combineDf = functools.reduce(lambda df,df1: df.union(df1),
+                                [spark.read.format(fileFormat.lower()).option("header","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
+                    return combineDf
 
         if schema:
 
             df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
 
+            return df
+
         else:
 
-             df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder)
+            df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder)
 
-        return df
+            return df
+        
+    # def readStreamFromFile(self,sourceName,fileFormat,loadType,schema):
+
+    #     return
+
     
     def readFromTable(self,tableName):
         
@@ -191,12 +210,6 @@ class dataLakeConnection:
         else:
             return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
     
-    
-
-
-
-
-
 
 # COMMAND ----------
 
@@ -209,7 +222,4 @@ globalDataLakeConfig = dataLakeConfig(readFilePath=globalTemplateEnv.getReadFile
                                       ,dbName = globalTemplateEnv.getDatabase()
                                       ,rootDir = globalTemplateEnv.getDatabaseFolder()
                                       )
-
-#globalPersistentTaskParameters = persistantTaskParameters()
-
 
