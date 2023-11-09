@@ -27,10 +27,10 @@ df = createDataframe(
 # COMMAND ----------
 
 # Transform
-# Try: This block will test the excepted error to occur
-# Except:  Here you can handle the error
-# Else: If there is no exception then this block will be executed
-# Finally: Finally block always gets executed either exception is generated or not
+    # Try: This block will test the excepted error to occur
+    # Except:  Here you can handle the error
+    # Else: If there is no exception then this block will be executed
+    # Finally: Finally block always gets executed either exception is generated or not
 
 try:
     # Run Generic Logic
@@ -62,13 +62,15 @@ finally:
 
 # assert 1
 # assert 2
+#   
+#   
 
 # COMMAND ----------
 
 createTable(
-    medallion_step = globalTemplateEnv.getDestTablePrefix()+'_bronze',
     load_type = globalTemplateEnv.getloadType(),
     dataLakeConfig = globalDataLakeConfig, 
     df = df,
-    tableName = globalTemplateEnv.newTableName
+    tableName = globalTemplateEnv.destTablePrefix,
+    medallion_step = 'bronze'
     )

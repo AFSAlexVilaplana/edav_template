@@ -180,10 +180,14 @@ class dataLakeConnection:
 
         return df
     
-    def readFromTable(self,tableName):
-        
-        return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName))
-    
+    def readFromTable(self,tableName, schema = ''):
+        """
+            Return Table with schema. If no schema provided, infer schema
+        """
+        if schema:
+            return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName)).schema(schema)
+        else:
+            return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName)).option("inferSchema","true")
 
     def writeToTable(self,df,tableName,load_type):
         if load_type == "full":
@@ -192,12 +196,6 @@ class dataLakeConnection:
             return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
     
     
-
-
-
-
-
-
 # COMMAND ----------
 
 

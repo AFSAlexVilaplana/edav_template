@@ -4,22 +4,29 @@
 
 # COMMAND ----------
 
-def createDataframe(fileName: str, dataLakeConfig: object, fileFormat: str, schema: str=''):
+def createDataframe(medallion_step: str, source: str, dataLakeConfig: object, fileFormat: str = '', schema: str=''):
     #refer to bronze_functions notebook for arguments
     #needs to accept arguments for file and table\
     #maybe better to be split into two functions
 
-    dataLakeConn = dataLakeConnection(dataLakeConfig,schema)
-    df = dataLakeConn.readFileFrom(fileName, fileFormat,schema)
-    
-    return df
+    assert medallion_step in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
 
-def createTable(medallion_step, load_type : str, dataLakeConfig : object, df : object, tableName : str):     #add arguments based on bronze notebook
-    assert medallion_step in ['bronze','silver','gold'],"medallion step must be one item of this list ['bronze','silver','gold']"
-    assert loadType in ["full","incremental"], "loadType must be 'full' or 'incremental'"
-    
+    dataLakeConn = dataLakeConnection(dataLakeConfig,schema)
+
+    if medallion_step == 'bronze':
+        return dataLakeConn.readFileFrom(sourceName = source, fileFormat, schema)
+    else:
+        return dataLakeConn.readFromTable(tableName = source)
+
+def createTable( dataLakeConfig : object, df : object, tableName : str, medallion_step : str, load_type : str = 'incremental'):     #add arguments based on bronze notebook
+    """
+    loadType in ["full","incremental"], "loadType must be 'full' or 'incremental'"
+    medallion_step in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
+    """
+    tableDest = tableName + "_" + medallion_step
+
     dataLakeConn = dataLakeConnection(dataLakeConfig)
-    dataLakeConn.writeToTable(df,tableName,loadType)
+    dataLakeConn.writeToTable(df, tableDest, loadType)
 
 # COMMAND --------
 
@@ -32,7 +39,7 @@ def createStreamingDataframe(dataLakeConfig,schema):
     df = dataLakeConn.readFileFrom(fileName,fileFormat,schema)
 
 
-def createStreamTable(medallion_step,load_type,dataLakeConfig): # should have similar arugments to createTable
+def createStreamTable(medallion_step,dataLakeConfig, load_type = ''): # should have similar arugments to createTable
     assert medallion_step in ['bronze','silver','gold'],"medallion step must be one item of this list ['bronze','silver','gold']"
     assert loadType == 'autoloader', "loadType must be autoloader"
     
