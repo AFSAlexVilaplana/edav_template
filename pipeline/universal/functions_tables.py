@@ -14,7 +14,9 @@ def createDataframe(medallion_step: str, source: str, dataLakeConfig: object, fi
     dataLakeConn = dataLakeConnection(dataLakeConfig,schema)
 
     if medallion_step == 'bronze':
-        return dataLakeConn.readFileFrom(sourceName = source, fileFormat, schema)
+        return dataLakeConn.readFileFrom(sourceName = source, 
+                                         fileFormat = fileFormat, 
+                                         schema = schema)
     else:
         return dataLakeConn.readFromTable(tableName = source)
 

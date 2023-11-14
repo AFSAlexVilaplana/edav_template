@@ -18,7 +18,8 @@ logger = logging.getLogger()
 # setSchema = 
 
 df = createDataframe(
-    fileName = globalTemplateEnv.getSourceName(),
+    medallion_step = 'bronze',
+    source = globalTemplateEnv.getSourceName(),
     dataLakeConfig = globalDataLakeConfig,
     fileFormat = globalTemplateEnv.getFileExt()
     #, schema = setSchema
@@ -71,6 +72,6 @@ createTable(
     load_type = globalTemplateEnv.getloadType(),
     dataLakeConfig = globalDataLakeConfig, 
     df = df,
-    tableName = globalTemplateEnv.destTablePrefix,
+    tableName = globalTemplateEnv.getDestTablePrefix,
     medallion_step = 'bronze'
     )
