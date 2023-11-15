@@ -6,39 +6,59 @@ from pyspark.sql.types import *
 
 # COMMAND ----------
 
+# DBTITLE 1,widgets are used for debugging
 ########run below for testing
 
 #dbutils.widgets.removeAll()
+dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
+dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
+#dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
+dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
+dbutils.widgets.dropdown("fileExt","json",["json"])
+dbutils.widgets.dropdown("loadType","full",["full","incremental"])
+dbutils.widgets.dropdown("destTablePrefix","constructor984",["constructor984"])
+dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
+dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
+dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/sebastian.clavijo@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/sebastian.clavijo@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
+dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/sebastian.clavijo@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/sebastian.clavijo@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
+dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
+
+# dbutils.widgets.removeAll()
 # dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 # dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
 # #dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
 # dbutils.widgets.dropdown("database",os.getenv("database"),[f"{os.getenv('database')}"])
-# dbutils.widgets.dropdown("sourceName","constructor/",["constructor/"])
-# dbutils.widgets.dropdown("fileExt","json",["json"])
+# dbutils.widgets.dropdown("sourceName","healthcare-diabetes/",["healthcare-diabetes/"])
+# dbutils.widgets.dropdown("fileExt","csv",["csv"])
 # dbutils.widgets.dropdown("loadType","full",["full","incremental"])
-# dbutils.widgets.dropdown("destTablePrefix","constructor989",["constructor989"])
-# dbutils.widgets.multiselect("dropColumns","url",["url","constructorRef"])
-# dbutils.widgets.multiselect("identityColumns","constructorId",['constructorId'])
-# dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/silver/silver_constructor_execute"])
-# dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/alexander.vilaplana@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
+# dbutils.widgets.dropdown("destTablePrefix","diabete900",["diabete900"])
+# dbutils.widgets.multiselect("dropColumns","BMI",["BMI","DiabetesPedigreeFunction"])
+# dbutils.widgets.multiselect("identityColumns","id",['id'])
+# dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
+# dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
 
+
+# COMMAND ----------
+
+# DBTITLE 1,uncomment these widgets for full pipeline execution (including adf)
 #####run below for actual job
-dbutils.widgets.removeAll()
-dbutils.widgets.dropdown("readFilePath",'',[""])
-dbutils.widgets.dropdown("databaseFolder",'',[''])
-#dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
-dbutils.widgets.dropdown("database",'',[""])
-dbutils.widgets.dropdown("sourceName","",[""])
-dbutils.widgets.dropdown("fileExt","",[""])
-dbutils.widgets.dropdown("loadType","",[""])
-dbutils.widgets.dropdown("destTablePrefix","",[""])
-dbutils.widgets.multiselect("dropColumns","",[""])
-dbutils.widgets.multiselect("identityColumns","",[''])
-dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
-dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
-dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
+# dbutils.widgets.removeAll()
+# dbutils.widgets.dropdown("readFilePath",'',[""])
+# dbutils.widgets.dropdown("databaseFolder",'',[''])
+# #dbutils.widgets.dropdown("scope",os.getenv("scope_name"),[f"{os.getenv('scope_name')}"])
+# dbutils.widgets.dropdown("database",'',[""])
+# dbutils.widgets.dropdown("sourceName","",[""])
+# dbutils.widgets.dropdown("fileExt","",[""])
+# dbutils.widgets.dropdown("loadType","",[""])
+# dbutils.widgets.dropdown("destTablePrefix","",[""])
+# dbutils.widgets.multiselect("dropColumns","",[""])
+# dbutils.widgets.multiselect("identityColumns","",[''])
+# dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
+# dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
+# dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
 # COMMAND ----------
 
@@ -164,31 +184,14 @@ class dataLakeConnection:
         
         newFileRootPath = self.dataLakeConfig.getReadFilePath()+sourceName
         newFileFolder = newFileRootPath + sorted([x.name for x in dbutils.fs.ls(newFileRootPath)],reverse=True)[0]
-        
-        if fileFormat != "delta":
-            newFiles = dbutils.fs.ls(newFileFolder)
-            
-            newFileList = [x.name for x in newFiles]
-
-            if schema:
-
-                combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder+newFile) for newFile in newFileList])
-                return combineDf
-            
-            else:
-                    #revisit multiline issue for json
-                combineDf = functools.reduce(lambda df,df1: df.union(df1),
-                            [spark.read.format(fileFormat.lower()).option("header","true").option("inferSchema","true").load(newFileFolder+newFile) for newFile in newFileList])
-                return combineDf
 
         if schema:
 
-            df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").schema(schema).load(newFileFolder)
+            df = spark.read.format(fileFormat.lower()).option("header","true").schema(schema).load(newFileFolder)
 
         else:
 
-             df = spark.read.format(fileFormat.lower()).option("header","true").option("multiline","true").option("inferSchema","true").load(newFileFolder)
+             df = spark.read.format(fileFormat.lower()).option("header","true").option("inferSchema","true").load(newFileFolder)
 
         return df
     
@@ -197,9 +200,9 @@ class dataLakeConnection:
             Return Table with schema. If no schema provided, infer schema
         """
         if schema:
-            return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName)).schema(schema)
+            return spark.read.format("delta").option("ignoreDeletes","true").schema(schema).table(self.dataLakeConfig.getTable(tableName))
         else:
-            return spark.read.format("delta").option("ignoreDeletes","true").table(self.dataLakeConfig.getTable(tableName)).option("inferSchema","true")
+            return spark.read.format("delta").option("ignoreDeletes","true").option("inferSchema","true").table(self.dataLakeConfig.getTable(tableName))
 
     def writeToTable(self,df,tableName,load_type):
         if load_type == "full":
@@ -208,6 +211,7 @@ class dataLakeConnection:
             return df.write.format("delta").mode("append").option("overwriteSchema","true").saveAsTable(self.dataLakeConfig.getTable(tableName))
     
     
+
 # COMMAND ----------
 
 

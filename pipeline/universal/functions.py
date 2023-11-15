@@ -1,4 +1,8 @@
 # Databricks notebook source
+# MAGIC %run ./environment_setup
+
+# COMMAND ----------
+
 from pyspark.sql.functions import current_timestamp
 from pyspark.sql import DataFrame
 import json
@@ -14,16 +18,17 @@ def createDataframe(medallionStep: str,
     #needs to accept arguments for file and table\
     #maybe better to be split into two functions
 
-    assert medallionStep in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
+    assert medallionStep in ['raw','bronze','silver','gold'], "medallion step must be one item of this list ['raw','bronze','silver','gold']"
 
-    dataLakeConn = dataLakeConnection(dataLakeConfig,schema)
+    dataLakeConn = dataLakeConnection(dataLakeConfig)
 
-    if medallionStep == 'bronze':
+    if medallionStep == 'raw':
         return dataLakeConn.readFileFrom(sourceName = source, 
                                          fileFormat = fileFormat, 
                                          schema = schema)
     else:
-        return dataLakeConn.readFromTable(tableName = source)
+        name = source + "_" + medallionStep
+        return dataLakeConn.readFromTable(tableName = name)
 
 def createTable( 
       dataLakeConfig : object, 
@@ -31,6 +36,7 @@ def createTable(
       tableName : str, 
       medallionStep : str, 
       loadType : str = 'incremental'):     #add arguments based on bronze notebook
+
     """
     loadType in ["full","incremental"], "loadType must be 'full' or 'incremental'"
     medallionStep in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
@@ -40,7 +46,7 @@ def createTable(
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     dataLakeConn.writeToTable(df, tableDest, loadType)
 
-# COMMAND --------
+# COMMAND ----------
 
 # Streaming Logic
 

@@ -1,9 +1,4 @@
 # Databricks notebook source
-# MAGIC %run ./silver_functions
-# MAGIC
-
-# COMMAND ----------
-
 # MAGIC %run ../universal/functions
 
 # COMMAND ----------
@@ -22,11 +17,19 @@ logger = logging.getLogger()
 # setSchema
 df = createDataframe(
     medallionStep = 'bronze',
-    source = globalTemplateEnv.getSourceName(),
+    source = globalTemplateEnv.getDestTablePrefix(),
     dataLakeConfig = globalDataLakeConfig,
     fileFormat = globalTemplateEnv.getFileExt()
     #, schema = setSchema
 )
+
+# COMMAND ----------
+
+globalTemplateEnv.getDestTablePrefix()
+
+# COMMAND ----------
+
+display(df)
 
 # COMMAND ----------
 
@@ -40,7 +43,7 @@ try:
     # Run Generic Logic
     # perform_operation()
     logger.info("Operation succeeded")
-
+    logger.error("this is an error")
 except (Exception, ValueError) as e:
     # Handle Exception
     logging.error(f"This is my error: {e}")
@@ -53,12 +56,21 @@ finally:
 
 
 # COMMAND ----------
+
 # Validation Step
 
 # assert 1
 # assert 2
 #   
 #   
+
+# COMMAND ----------
+
+globalTemplateEnv.getDestTablePrefix()
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 

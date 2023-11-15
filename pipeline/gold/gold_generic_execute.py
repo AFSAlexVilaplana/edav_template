@@ -1,9 +1,4 @@
 # Databricks notebook source
-# MAGIC %run ./gold_functions
-# MAGIC
-
-# COMMAND ----------
-
 # MAGIC %run ../universal/functions
 
 # COMMAND ----------
@@ -17,7 +12,7 @@ logger = logging.getLogger()
 # setSchema
 df = createDataframe(
     medallionStep = 'silver',
-    source = globalTemplateEnv.getSourceName(),
+    source = globalTemplateEnv.getDestTablePrefix(),
     dataLakeConfig = globalDataLakeConfig,
     fileFormat = globalTemplateEnv.getFileExt()
     #, schema = setSchema
@@ -48,6 +43,7 @@ finally:
 
 
 # COMMAND ----------
+
 # Validation Step
 
 # assert 1
