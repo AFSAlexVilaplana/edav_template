@@ -9,6 +9,7 @@ from pyspark.sql.types import *
 # DBTITLE 1,widgets are used for debugging
 ########run below for testing
 
+
 #dbutils.widgets.removeAll()
 dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
@@ -24,6 +25,7 @@ dbutils.widgets.dropdown("silverCustomNotebookPath","/Repos/sebastian.clavijo@ac
 dbutils.widgets.dropdown("goldCustomNotebookPath","/Repos/sebastian.clavijo@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute",["/Repos/sebastian.clavijo@accenturefederal.com/edav_template/pipeline/gold/gold_constructor_execute"])
 dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 
+
 # dbutils.widgets.removeAll()
 # dbutils.widgets.dropdown("readFilePath",os.getenv("read_file_path").strip(),[f"{os.getenv('read_file_path').strip()}"])
 # dbutils.widgets.dropdown("databaseFolder",os.getenv("database_folder").strip(),[f"{os.getenv('database_folder').strip()}"])
@@ -38,6 +40,7 @@ dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
+
 
 
 
@@ -59,6 +62,9 @@ dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("silverCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("goldCustomNotebookPath","",[""])
 # dbutils.widgets.dropdown("bronzeCustomNotebookPath","",[""])
+
+
+
 
 # COMMAND ----------
 
@@ -195,6 +201,7 @@ class dataLakeConnection:
 
         return df
     
+
     def readFromTable(self,tableName, schema = ''):
         """
             Return Table with schema. If no schema provided, infer schema
@@ -224,6 +231,5 @@ globalDataLakeConfig = dataLakeConfig(readFilePath=globalTemplateEnv.getReadFile
                                       ,rootDir = globalTemplateEnv.getDatabaseFolder()
                                       )
 
-#globalPersistentTaskParameters = persistantTaskParameters()
 
 
