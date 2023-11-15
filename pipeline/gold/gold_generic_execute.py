@@ -16,13 +16,12 @@ logger = logging.getLogger()
 # Raw Read
 # setSchema
 df = createDataframe(
-    medallion_step = 'silver',
+    medallionStep = 'silver',
     source = globalTemplateEnv.getSourceName(),
     dataLakeConfig = globalDataLakeConfig,
     fileFormat = globalTemplateEnv.getFileExt()
     #, schema = setSchema
 )
-
 
 # COMMAND ----------
 
@@ -59,9 +58,9 @@ finally:
 # COMMAND ----------
 
 createTable(
-    load_type = globalTemplateEnv.getloadType(),
+    loadType = globalTemplateEnv.getloadType(),
     dataLakeConfig = globalDataLakeConfig, 
     df = df,
-    tableName = globalTemplateEnv.getDestTablePrefix,
-    medallion_step = 'gold'
+    tableName = globalTemplateEnv.getDestTablePrefix(),
+    medallionStep = 'gold'
     )

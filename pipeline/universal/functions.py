@@ -5,7 +5,7 @@ import json
 
 # COMMAND ----------
 
-def createDataframe(medallion_step: str, 
+def createDataframe(medallionStep: str, 
                     source: str, 
                     dataLakeConfig: object, 
                     fileFormat: str = '', 
@@ -14,11 +14,11 @@ def createDataframe(medallion_step: str,
     #needs to accept arguments for file and table\
     #maybe better to be split into two functions
 
-    assert medallion_step in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
+    assert medallionStep in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
 
     dataLakeConn = dataLakeConnection(dataLakeConfig,schema)
 
-    if medallion_step == 'bronze':
+    if medallionStep == 'bronze':
         return dataLakeConn.readFileFrom(sourceName = source, 
                                          fileFormat = fileFormat, 
                                          schema = schema)
@@ -29,13 +29,13 @@ def createTable(
       dataLakeConfig : object, 
       df : object, 
       tableName : str, 
-      medallion_step : str, 
-      load_type : str = 'incremental'):     #add arguments based on bronze notebook
+      medallionStep : str, 
+      loadType : str = 'incremental'):     #add arguments based on bronze notebook
     """
     loadType in ["full","incremental"], "loadType must be 'full' or 'incremental'"
-    medallion_step in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
+    medallionStep in ['bronze','silver','gold'], "medallion step must be one item of this list ['bronze','silver','gold']"
     """
-    tableDest = tableName + "_" + medallion_step
+    tableDest = tableName + "_" + medallionStep
 
     dataLakeConn = dataLakeConnection(dataLakeConfig)
     dataLakeConn.writeToTable(df, tableDest, loadType)
